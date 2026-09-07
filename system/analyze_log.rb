@@ -7,4 +7,7 @@ end
 puts "Measurement count: #{temperatures.size}"
 puts "Highest temperature: #{temperatures.max} C"
 puts "Average temperature: #{(temperatures.sum / temperatures.size).round(1)} C"
-gi
+puts "Lowest temperature: #{temperatures.min} C"
+range = temperatures.max - temperatures.min
+puts "Temperature range: #{range.round(1)} C"
+
