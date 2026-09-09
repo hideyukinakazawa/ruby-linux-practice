@@ -4,10 +4,33 @@ temperatures = lines.map do |line|
     line.match(/(\d+\.\d+) C/)[1].to_f
 end
 
+def highest_temperature(temperatures)
+    temperatures.max
+end
+
+def average_temperature(temperatures)
+    temperatures.sum / temperatures.size
+end
+
+def lowest_temperature(temperatures)
+    temperatures.min
+end
+
+def temperature_range(temperatures)
+    temperatures.max - temperatures.min
+end
+
 puts "Measurement count: #{temperatures.size}"
-puts "Highest temperature: #{temperatures.max} C"
-puts "Average temperature: #{(temperatures.sum / temperatures.size).round(1)} C"
-puts "Lowest temperature: #{temperatures.min} C"
-range = temperatures.max - temperatures.min
-puts "Temperature range: #{range.round(1)} C"
+
+highest = highest_temperature(temperatures)
+puts "Highest temperature: #{highest} C"
+
+average = average_temperature(temperatures)
+puts "Average temperature: #{average.round(1)} C"
+
+lowest = lowest_temperature(temperatures)
+puts "Lowest temperature: #{lowest} C"
+
+range = temperature_range(temperatures)
+puts "Temperature range: #{range} C"
 
