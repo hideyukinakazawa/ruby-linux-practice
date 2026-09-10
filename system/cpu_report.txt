@@ -1,0 +1,6 @@
+CPU Temperature Report
+Measurement count: 3
+Highest temperature:  44.3 C
+Average temperature: 44.0 C
+Lowest temperature: 43.8 C
+Temperature range: 0.5 C
