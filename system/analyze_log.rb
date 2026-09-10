@@ -34,3 +34,11 @@ puts "Lowest temperature: #{lowest} C"
 range = temperature_range(temperatures)
 puts "Temperature range: #{range} C"
 
+File.open("cpu_report.txt", "w") do |file|
+  file.puts "CPU Temperature Report"
+  file.puts "Measurement count: #{temperatures.size}"
+  file.puts "Highest temperature:  #{highest} C"
+  file.puts "Average temperature: #{average.round(1)} C"
+  file.puts "Lowest temperature: #{lowest} C"
+  file.puts "Temperature range: #{range} C"
+end
