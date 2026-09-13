@@ -10,9 +10,19 @@ puts "\n--- Uptime ---"
 system("uptime")
 
 puts "\n--- CPU Temperature ---"
-system("vcgencmd measure_temp")
 
-puts "\n--- Disk Usage ---"
+cpu_info = `vcgencmd measure_temp`
+puts cpu_info
+
+cpu_temperature = cpu_info.match(/[\d.]+/)[0].to_f
+
+if cpu_temperature >= 70
+    cpu_status = "WARNING"
+elsif cpu_temperature >= 50
+    cpu_status = "WARM"
+else
+    cpu_status = "NORMAL"
+end
 
 disk_info = `df -h /`
 
@@ -53,5 +63,21 @@ end
 
 puts "Memory usage: #{memory_usage}%"
 puts "Memory status: #{memory_status}"
+
+if cpu_status == "WARNING" || disk_status == "WARNING" || memory_status == "WARNING"
+  overall_status = "WARNING"
+elsif cpu_status == "WARM" || disk_status == "WARM" || memory_status == "WARM"
+  overall_status = "WARM"
+else
+  overall_status = "NORMAL"
+end
+
+puts "--- System Summary ---"
+puts "CPU_status: #{cpu_status}"
+puts "Disk_status: #{disk_status}"
+puts "Memory_status: #{memory_status}"
+puts "Overall_status: #{overall_status}"
+
+
 
 
