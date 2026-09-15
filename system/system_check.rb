@@ -78,6 +78,23 @@ puts "Disk_status: #{disk_status}"
 puts "Memory_status: #{memory_status}"
 puts "Overall_status: #{overall_status}"
 
+File.open("system_report.txt", "w") do |file|
+  file.puts "--- System Summary ---"
+
+  file.puts "CPU temperature: #{cpu_temperature} C"
+  file.puts "CPU status: #{cpu_status}"
+
+  file.puts "Disk usage: #{disk_usage}%"
+  file.puts "Disk status: #{disk_status}"
+
+  file.puts "Memory usage: #{memory_usage}%"
+  file.puts "Memory status: #{memory_status}"
+  
+  file.puts "Overall status: #{overall_status}"
+end
+
+
+
 
 
 
