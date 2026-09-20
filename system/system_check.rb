@@ -49,9 +49,29 @@ puts memory_info
 
 memory_line = memory_info.lines.find { |line| line.start_with?("Mem:") }
 memory_values = memory_line.split
+
+swap_line = memory_info.lines.find { |line| line.start_with?("Swap:")}
+swap_values = swap_line.split
+total_swap = swap_values[1].to_f
+used_swap = swap_values[2].to_f
+swap_usage = total_swap.zero? ? 0.0 : (used_swap / total_swap * 100).round(1)
+
+if swap_usage >= 80
+    swap_status = "WARNING"
+elsif swap_usage >= 50
+    swap_status = "WARM"
+else 
+    swap_status = "NORMAL"
+end
+
+puts "Swap usage: #{swap_usage}%"
+puts "Swap status: #{swap_status}"
+    
+
 total_memory = memory_values[1].to_f
-used_memory = memory_values[2].to_f
-memory_usage = (used_memory / total_memory * 100).round(1)
+available_memory = memory_values[6].to_f
+
+memory_usage = ((total_memory - available_memory) / total_memory * 100).round(1)
 
 if memory_usage >= 90
     memory_status = "WARNING"
