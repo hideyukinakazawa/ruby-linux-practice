@@ -11,6 +11,11 @@ system("uptime")
 
 puts "\n--- CPU Temperature ---"
 
+def get_disk_usage
+    disk_info = `df -h /`
+    disk_info.match(/(\d+)%/)[1].to_i
+end
+
 cpu_info = `vcgencmd measure_temp`
 puts cpu_info
 
@@ -24,11 +29,7 @@ else
     cpu_status = "NORMAL"
 end
 
-disk_info = `df -h /`
-
-puts disk_info
-
-disk_usage = disk_info.match(/(\d+)%/)[1].to_i
+disk_usage = get_disk_usage
 
 puts "Disk usage: #{disk_usage}%"
 
