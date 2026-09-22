@@ -16,10 +16,22 @@ def get_disk_usage
     disk_info.match(/(\d+)%/)[1].to_i
 end
 
-cpu_info = `vcgencmd measure_temp`
-puts cpu_info
+def status_from_usage(usage, warm_threshold, warning_threshold)
+    if usage >= warning_threshold
+        "WARNING"
+    elsif usage >= warm_threshold
+        "WARM"
+    else
+        "NORMAL"
+    end
+end
 
-cpu_temperature = cpu_info.match(/[\d.]+/)[0].to_f
+def get_cpu_temperature
+    cpu_info = `vcgencmd measure_temp`
+    cpu_info.match(/[\d.]+/)[0].to_f
+end
+
+cpu_temperature = get_cpu_temperature
 
 if cpu_temperature >= 70
     cpu_status = "WARNING"
@@ -33,13 +45,7 @@ disk_usage = get_disk_usage
 
 puts "Disk usage: #{disk_usage}%"
 
-if disk_usage > 90
-    disk_status = "WARNING"
-elsif disk_usage >= 70
-    disk_status = "WARM"
-else
-    disk_status = "NORMAL"
-end
+disk_status = status_from_usage(disk_usage, 70, 90)
 
 puts "Disk status: #{disk_status}"
 
@@ -57,13 +63,7 @@ total_swap = swap_values[1].to_f
 used_swap = swap_values[2].to_f
 swap_usage = total_swap.zero? ? 0.0 : (used_swap / total_swap * 100).round(1)
 
-if swap_usage >= 80
-    swap_status = "WARNING"
-elsif swap_usage >= 50
-    swap_status = "WARM"
-else 
-    swap_status = "NORMAL"
-end
+swap_status = status_from_usage(swap_usage, 70, 90)
 
 puts "Swap usage: #{swap_usage}%"
 puts "Swap status: #{swap_status}"
@@ -74,13 +74,8 @@ available_memory = memory_values[6].to_f
 
 memory_usage = ((total_memory - available_memory) / total_memory * 100).round(1)
 
-if memory_usage >= 90
-    memory_status = "WARNING"
-elsif memory_usage >= 70
-    memory_status = "WARM"
-else
-    memory_status = "NORMAL"
-end
+memory_status = status_from_usage(memory_usage, 70, 90)
+
 
 puts "Memory usage: #{memory_usage}%"
 puts "Memory status: #{memory_status}"

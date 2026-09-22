@@ -1,8 +1,8 @@
 --- System Summary ---
-CPU temperature: 38.9 C
+CPU temperature: 40.9 C
 CPU status: NORMAL
 Disk usage: 38%
 Disk status: NORMAL
-Memory usage: 69.5%
-Memory status: NORMAL
-Overall status: NORMAL
+Memory usage: 78.5%
+Memory status: WARM
+Overall status: WARM
