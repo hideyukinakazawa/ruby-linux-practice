@@ -18,6 +18,30 @@ system("uptime")
 puts "\n--- CPU Temperature ---"
 
 # ---Monitoring methods ---
+def write_report(cpu_temperature, cpu_status,
+                 disk_usage, disk_status,
+                 memory_usage, memory_status,
+                 swap_usage, swap_status,
+                 overall_status)
+  File.open("system_report.txt", "w") do |file|
+    file.puts "--- System Summary ---"
+
+    file.puts "CPU temperature: #{cpu_temperature} C"
+    file.puts "CPU status: #{cpu_status}"
+
+    file.puts "Disk usage: #{disk_usage}%"
+    file.puts "Disk status: #{disk_status}"
+
+    file.puts "Memory usage: #{memory_usage}%"
+    file.puts "Memory status: #{memory_status}"
+
+    file.puts "Swap usage: #{swap_usage}%"
+    file.puts "Swap status: #{swap_status}"
+  
+    file.puts "Overall status: #{overall_status}"
+    end
+
+end
 
 # 各監視項目の状態からシステム全体の状態を判定する
 def overall_status_from(statuses)
@@ -119,6 +143,14 @@ puts "Memory status: #{memory_status}"
 statuses = [cpu_status, disk_status, memory_status, swap_status]
 
 overall_status = overall_status_from(statuses)
+
+write_report(
+  cpu_temperature, cpu_status,
+  disk_usage, disk_status,
+  memory_usage, memory_status,
+  swap_usage, swap_status,
+  overall_status
+)
 
 puts "--- System Summary ---"
 puts "CPU_status: #{cpu_status}"
