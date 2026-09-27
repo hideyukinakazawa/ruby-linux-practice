@@ -159,27 +159,6 @@ puts "Memory_status: #{memory_status}"
 puts "Swap_status: #{swap_status}"
 puts "Overall_status: #{overall_status}"
 
-# --- Report output ---
-
-# 最新の監視結果をsystem_report.txtへ保存
-# "W"モード → 実行の度に前回の内容を上書き
-File.open("system_report.txt", "w") do |file|
-  file.puts "--- System Summary ---"
-
-  file.puts "CPU temperature: #{cpu_temperature} C"
-  file.puts "CPU status: #{cpu_status}"
-
-  file.puts "Disk usage: #{disk_usage}%"
-  file.puts "Disk status: #{disk_status}"
-
-  file.puts "Memory usage: #{memory_usage}%"
-  file.puts "Memory status: #{memory_status}"
-
-  file.puts "Swap usage: #{swap_usage}%"
-  file.puts "Swap status: #{swap_status}"
-  
-  file.puts "Overall status: #{overall_status}"
-end
 
 
 
