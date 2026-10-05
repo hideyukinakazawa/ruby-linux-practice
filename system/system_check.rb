@@ -139,6 +139,15 @@ puts "Memory status: #{memory_status}"
 
 # --- Overall status ---
 
+system_status = {
+  cpu: cpu_status,
+  disk: disk_status,
+  memory: memory_status,
+  swap: swap_status
+}
+
+puts system_status
+
 # CPU・Disk・Memory・Swapのうち最も深刻な状態をシステム全体の状態とする
 statuses = [cpu_status, disk_status, memory_status, swap_status]
 
