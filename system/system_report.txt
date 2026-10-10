@@ -1,10 +1,11 @@
 --- System Summary ---
-CPU temperature: 40.9 C
+CPU temperature: 38.4 C
 CPU status: NORMAL
 Disk usage: 40%
 Disk status: NORMAL
-Memory usage: 56.9%
+Memory usage: 62.2%
 Memory status: NORMAL
-Swap usage: 0.0%
+Swap usage: 1.6%
 Swap status: NORMAL
 Overall status: NORMAL
+System message: OK: System Status is NORMAL.

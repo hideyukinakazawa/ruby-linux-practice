@@ -22,7 +22,7 @@ def write_report(cpu_temperature, cpu_status,
                  disk_usage, disk_status,
                  memory_usage, memory_status,
                  swap_usage, swap_status,
-                 overall_status)
+                 overall_status, system_message)
   File.open("system_report.txt", "w") do |file|
     file.puts "--- System Summary ---"
 
@@ -39,6 +39,7 @@ def write_report(cpu_temperature, cpu_status,
     file.puts "Swap status: #{swap_status}"
   
     file.puts "Overall status: #{overall_status}"
+    file.puts "System message: #{system_message}"
     end
 
 end
@@ -174,7 +175,7 @@ write_report(
   disk_usage, disk_status,
   memory_usage, memory_status,
   swap_usage, swap_status,
-  overall_status
+  overall_status, system_message
 )
 
 puts "--- System Summary ---"
