@@ -153,6 +153,22 @@ statuses = [cpu_status, disk_status, memory_status, swap_status]
 
 overall_status = overall_status_from(statuses)
 
+# システム全体の状態に応じて、人が理解しやすいメッセージを返す
+def message_from_status(status)
+    case status
+    when "WARNING"
+      "ALERT: System Status is WARNING. Please check CPU, Disk, Memory, and Swap."
+    when "WARM"
+      "NOTICE: System Status is WARM. Please monitor the system."
+    else
+        "OK: System Status is NORMAL."
+    end
+end
+
+system_message = message_from_status(overall_status)
+
+puts "System message: #{system_message}"
+
 write_report(
   cpu_temperature, cpu_status,
   disk_usage, disk_status,
