@@ -17,11 +17,23 @@ system("uptime")
 
 puts "\n--- CPU Temperature ---"
 
+# SSHサービスの稼働状況を確認する
+def get_ssh_status
+  service_status = `systemctl is-active ssh`.strip
+
+  if service_status == "active"
+    "NORMAL"
+  else
+    "WARNING"
+  end
+end
+
 # ---Monitoring methods ---
 def write_report(cpu_temperature, cpu_status,
                  disk_usage, disk_status,
                  memory_usage, memory_status,
                  swap_usage, swap_status,
+                 ssh_status,
                  overall_status, system_message)
   File.open("system_report.txt", "w") do |file|
     file.puts "--- System Summary ---"
@@ -37,11 +49,12 @@ def write_report(cpu_temperature, cpu_status,
 
     file.puts "Swap usage: #{swap_usage}%"
     file.puts "Swap status: #{swap_status}"
+
+    file.puts "SSH status: #{ssh_status}"
   
     file.puts "Overall status: #{overall_status}"
     file.puts "System message: #{system_message}"
     end
-
 end
 
 # 各監視項目の状態からシステム全体の状態を判定する
@@ -150,7 +163,9 @@ system_status = {
 puts system_status
 
 # CPU・Disk・Memory・Swapのうち最も深刻な状態をシステム全体の状態とする
-statuses = [cpu_status, disk_status, memory_status, swap_status]
+ssh_status = get_ssh_status
+
+statuses = [cpu_status, disk_status, memory_status, swap_status, ssh_status]
 
 overall_status = overall_status_from(statuses)
 
@@ -175,6 +190,7 @@ write_report(
   disk_usage, disk_status,
   memory_usage, memory_status,
   swap_usage, swap_status,
+  ssh_status,
   overall_status, system_message
 )
 
@@ -183,6 +199,7 @@ puts "CPU_status: #{cpu_status}"
 puts "Disk_status: #{disk_status}"
 puts "Memory_status: #{memory_status}"
 puts "Swap_status: #{swap_status}"
+puts "SSH_status: #{ssh_status}"
 puts "Overall_status: #{overall_status}"
 
 
