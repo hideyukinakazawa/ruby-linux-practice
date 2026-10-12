@@ -29,6 +29,35 @@ def get_ssh_status
 end
 
 # ---Monitoring methods ---
+
+# メモリとSwapの情報を取得し、それぞれの使用率を計算する
+
+def get_memory_swap_usage
+  memory_info = `free -m`
+
+  memory_line = memory_info.lines.find { |line| line.start_with?("Mem:") }
+  swap_line = memory_info.lines.find { |line| line.start_with?("Swap:") }
+
+  memory_values = memory_line.split
+  swap_values = swap_line.split
+
+  total_memory= memory_values[1].to_f
+  available_memory = memory_values[6].to_f
+
+  total_swap = swap_values[1].to_f
+  used_swap = swap_values[2].to_f
+
+  memory_usage = ((total_memory - available_memory) / total_memory * 100).round(1)
+  swap_usage = total_swap.zero? ? 0.0 : (used_swap / total_swap * 100).round(1)
+
+  {
+  raw: memory_info,
+  memory_usage: memory_usage,
+  swap_usage: swap_usage
+  }
+
+end
+
 def write_report(cpu_temperature, 
                  disk_usage, 
                  memory_usage,
@@ -122,34 +151,19 @@ puts "Disk status: #{disk_status}"
 puts "\n--- Memory Usage ---"
 
 # free -mでメモリとSwapの使用状況をMB単位で取得
-memory_info = `free -m`
-puts memory_info
 
-# freeの出力からメモリ情報を抽出
-memory_line = memory_info.lines.find { |line| line.start_with?("Mem:") }
-memory_values = memory_line.split
+memory_swap = get_memory_swap_usage
 
-# freeの出力からSwap情報を抽出
-swap_line = memory_info.lines.find { |line| line.start_with?("Swap:")}
-swap_values = swap_line.split
+puts memory_swap[:raw]
 
-# Swap使用率を計算
-total_swap = swap_values[1].to_f
-used_swap = swap_values[2].to_f
-swap_usage = total_swap.zero? ? 0.0 : (used_swap / total_swap * 100).round(1)
+memory_usage = memory_swap[:memory_usage]
+swap_usage = memory_swap[:swap_usage]
 
 swap_status = status_from_usage(swap_usage, 70, 90)
-
-puts "Swap usage: #{swap_usage}%"
-puts "Swap status: #{swap_status}"
-    
-# availableを基準に実際に利用可能なメモリを考慮して使用率を計算
-total_memory = memory_values[1].to_f
-available_memory = memory_values[6].to_f
-memory_usage = ((total_memory - available_memory) / total_memory * 100).round(1)
-
 memory_status = status_from_usage(memory_usage, 70, 90)
 
+puts "Swap usage: #{swap_usage}%"
+puts "Swap status: #{swap_status}"  
 
 puts "Memory usage: #{memory_usage}%"
 puts "Memory status: #{memory_status}"
