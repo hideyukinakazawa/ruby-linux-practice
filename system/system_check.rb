@@ -30,6 +30,17 @@ end
 
 # ---Monitoring methods ---
 
+# Load Averageを取得してHashで返す
+def get_load_average
+  load_info = File.read("/proc/loadavg").split
+ 
+  {
+    one_minute: load_info[0].to_f,
+    five_minutes: load_info[1].to_f,
+    fifteen_minutes: load_info[2].to_f
+  }
+end
+
 # メモリとSwapの情報を取得し、それぞれの使用率を計算する
 
 def get_memory_swap_usage
@@ -107,7 +118,7 @@ def get_disk_usage
 end
 
 # 使用率と2つの閾値から NORMAL / WARM / WARNING を判定
-def status_from_usage(usage, warm_threshold, warning_threshold)
+def status_from_value(usage, warm_threshold, warning_threshold)
     if usage >= warning_threshold
         "WARNING"
     elsif usage >= warm_threshold
@@ -123,18 +134,19 @@ def get_cpu_temperature
     cpu_info.match(/[\d.]+/)[0].to_f
 end
 
+load_average = get_load_average
+
+puts "\n--- Load Average ---"
+puts format("1 min : %.2f", load_average[:one_minute])
+puts format("5 min : %.2f", load_average[:five_minutes])
+puts format("15 min: %.2f", load_average[:fifteen_minutes])
+
 # --- CPU Monitoring ---
 
 cpu_temperature = get_cpu_temperature
 
 # CPU温度に応じて状態を判定
-if cpu_temperature >= 70
-    cpu_status = "WARNING"
-elsif cpu_temperature >= 50
-    cpu_status = "WARM"
-else
-    cpu_status = "NORMAL"
-end
+cpu_status = status_from_value(cpu_temperature, 50, 70)
 
 # --- Disk monitoring ---
 
@@ -142,7 +154,7 @@ disk_usage = get_disk_usage
 
 puts "Disk usage: #{disk_usage}%"
 
-disk_status = status_from_usage(disk_usage, 70, 90)
+disk_status = status_from_value(disk_usage, 70, 90)
 
 puts "Disk status: #{disk_status}"
 
@@ -159,10 +171,10 @@ puts memory_swap[:raw]
 memory_usage = memory_swap[:memory_usage]
 swap_usage = memory_swap[:swap_usage]
 
-swap_status = status_from_usage(swap_usage, 70, 90)
-memory_status = status_from_usage(memory_usage, 70, 90)
+swap_status = status_from_value(swap_usage, 70, 90)
+memory_status = status_from_value(memory_usage, 70, 90)
 
-puts "Swap usage: #{swap_usage}%"
+puts "Swap usage: #{swap_usage}%" 
 puts "Swap status: #{swap_status}"  
 
 puts "Memory usage: #{memory_usage}%"
