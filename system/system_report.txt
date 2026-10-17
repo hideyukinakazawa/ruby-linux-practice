@@ -1,8 +1,12 @@
 --- System Summary ---
 CPU temperature: 42.8 C
-Disk usage: 40%
-Memory usage: 69.2%
-Swap usage: 4.9%
+Disk usage: 41%
+Memory usage: 67.5%
+Swap usage: 6.3%
+Load Average:
+1 min : 0.33
+5 min : 0.35
+15 min: 0.29
 CPU status: NORMAL
 Disk status: NORMAL
 Memory status: NORMAL

@@ -30,6 +30,27 @@ end
 
 # ---Monitoring methods ---
 
+# CPU使用率が高いプロセス上位5件を取得する
+def get_top_processes
+  process_info =
+    `ps -eo pid,stat,comm,%cpu,%mem --sort=-%cpu | head -n 6`
+
+  lines = process_info.lines.drop(1)
+
+  lines.map do |line|
+    pid, stat, command, cpu, memory = line.split
+
+    {
+      pid: pid.to_i,
+      stat: stat,
+      command: command,
+      cpu: cpu.to_f,
+      memory: memory.to_f
+    }
+  end
+end
+
+
 # Load Averageを取得してHashで返す
 def get_load_average
   load_info = File.read("/proc/loadavg").split
@@ -73,6 +94,7 @@ def write_report(cpu_temperature,
                  disk_usage, 
                  memory_usage,
                  swap_usage, 
+                 load_average,
                  system_status,
                  overall_status,
                  system_message)
@@ -84,6 +106,11 @@ def write_report(cpu_temperature,
     file.puts "Disk usage: #{disk_usage}%"
     file.puts "Memory usage: #{memory_usage}%"
     file.puts "Swap usage: #{swap_usage}%"
+
+    file.puts "Load Average:"
+    file.puts format("1 min : %.2f", load_average[:one_minute])
+    file.puts format("5 min : %.2f", load_average[:five_minutes])
+    file.puts format("15 min: %.2f", load_average[:fifteen_minutes])
 
     system_status.each do |name, status|
       display_name =
@@ -147,6 +174,17 @@ cpu_temperature = get_cpu_temperature
 
 # CPU温度に応じて状態を判定
 cpu_status = status_from_value(cpu_temperature, 50, 70)
+
+# --- Process monitoring ---
+top_processes = get_top_processes
+
+puts "\n--- Top Processes ---"
+
+top_processes.each do |process|
+  puts "PID #{process[:pid]} | #{process[:command]} |" \
+       "CPU #{process[:cpu]}% | MEM #{process[:memory]}% | " \
+       "STAT #{process[:stat]}"
+end 
 
 # --- Disk monitoring ---
 
@@ -220,6 +258,7 @@ write_report(
   disk_usage, 
   memory_usage, 
   swap_usage, 
+  load_average,
   system_status,
   overall_status, 
   system_message
