@@ -97,7 +97,8 @@ def write_report(cpu_temperature,
                  load_average,
                  system_status,
                  overall_status,
-                 system_message)
+                 system_message,
+                 top_processes)
 
     File.open("system_report.txt", "w") do |file|
     file.puts "--- System Summary ---"
@@ -111,6 +112,14 @@ def write_report(cpu_temperature,
     file.puts format("1 min : %.2f", load_average[:one_minute])
     file.puts format("5 min : %.2f", load_average[:five_minutes])
     file.puts format("15 min: %.2f", load_average[:fifteen_minutes])
+
+    file.puts "\n--- Top Processes ---"
+    
+    top_processes.each do |process|
+      file.puts "PID #{process[:pid]} | #{process[:command]} | " \
+                "CPU #{process[:cpu]}% | MEM #{process[:memory]}% | " \
+                "STAT #{process[:stat]}"
+    end
 
     system_status.each do |name, status|
       display_name =
@@ -261,7 +270,8 @@ write_report(
   load_average,
   system_status,
   overall_status, 
-  system_message
+  system_message,
+  top_processes
 )
 
 puts "--- System Summary ---"
