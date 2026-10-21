@@ -53,13 +53,18 @@ end
 
 # Load Averageを取得してHashで返す
 def get_load_average
-  load_info = File.read("/proc/loadavg").split
- 
-  {
-    one_minute: load_info[0].to_f,
-    five_minutes: load_info[1].to_f,
-    fifteen_minutes: load_info[2].to_f
-  }
+  begin
+    load_info = File.read("/proc/loadavg").split
+
+    {
+      one_minute: load_info[0].to_f,
+      five_minutes: load_info[1].to_f,
+      fifteen_minutes: load_info[2].to_f
+    }
+  rescue SystemCallError => e
+    warn "Load Averageの取得失敗: #{e.message}"
+    nil
+  end
 end
 
 # メモリとSwapの情報を取得し、それぞれの使用率を計算する
@@ -109,9 +114,14 @@ def write_report(cpu_temperature,
     file.puts "Swap usage: #{swap_usage}%"
 
     file.puts "Load Average:"
-    file.puts format("1 min : %.2f", load_average[:one_minute])
-    file.puts format("5 min : %.2f", load_average[:five_minutes])
-    file.puts format("15 min: %.2f", load_average[:fifteen_minutes])
+
+    if load_average
+      file.puts format("1 min : %.2f", load_average[:one_minute])
+      file.puts format("5 min : %.2f", load_average[:five_minutes])
+      file.puts format("15 min: %.2f", load_average[:fifteen_minutes])
+    else
+      file.puts "取得失敗"
+    end
 
     file.puts "\n--- Top Processes ---"
     
@@ -173,9 +183,14 @@ end
 load_average = get_load_average
 
 puts "\n--- Load Average ---"
-puts format("1 min : %.2f", load_average[:one_minute])
-puts format("5 min : %.2f", load_average[:five_minutes])
-puts format("15 min: %.2f", load_average[:fifteen_minutes])
+
+if load_average
+  puts format("1 min : %.2f", load_average[:one_minute])
+  puts format("5 min : %.2f", load_average[:five_minutes])
+  puts format("15 min: %.2f", load_average[:fifteen_minutes])
+else
+  puts "Load Average : 獲得失敗"
+end
 
 # --- CPU Monitoring ---
 
@@ -239,7 +254,18 @@ system_status = {
   ssh: ssh_status,
 }
 
+if load_average.nil?
+  system_status[:load_average] = "WARNING"
+end
+
 puts system_status
+
+# 各監視項目のうち、最も深刻な状態をシステム全体の状態とする
+statuses = system_status.values
+
+overall_status = overall_status_from(statuses)
+
+"ALERT: System Status is WARNING. Please check the monitoring results and error messages."
 
 # CPU・Disk・Memory・Swapのうち最も深刻な状態をシステム全体の状態とする
 statuses = system_status.values
