@@ -32,10 +32,15 @@ end
 
 # CPU使用率が高いプロセス上位5件を取得する
 def get_top_processes
-  process_info =
-    `ps -eo pid,stat,comm,%cpu,%mem --sort=-%cpu | head -n 6`
+  process_info = `ps -eo pid,stat,comm,%cpu,%mem --sort=-%cpu`
+  command_status = $?
+  
+  unless command_status.success?
+    warn "Top Peocessesの取得失敗: psの終了コード　#{command_status.exitstatus}"
+    return nil
+  end
 
-  lines = process_info.lines.drop(1)
+  lines = process_info.lines.drop(1).first(5)
 
   lines.map do |line|
     pid, stat, command, cpu, memory = line.split
@@ -125,11 +130,16 @@ def write_report(cpu_temperature,
 
     file.puts "\n--- Top Processes ---"
     
+  if top_processes
     top_processes.each do |process|
       file.puts "PID #{process[:pid]} | #{process[:command]} | " \
                 "CPU #{process[:cpu]}% | MEM #{process[:memory]}% | " \
                 "STAT #{process[:stat]}"
-    end
+    end 
+  else
+    file.puts "Top Processes: 取得失敗"
+  end
+   
 
     system_status.each do |name, status|
       display_name =
@@ -204,11 +214,16 @@ top_processes = get_top_processes
 
 puts "\n--- Top Processes ---"
 
-top_processes.each do |process|
-  puts "PID #{process[:pid]} | #{process[:command]} |" \
+if top_processes
+  top_processes.each do |process|
+    puts "PID #{process[:pid]} | #{process[:command]} |" \
        "CPU #{process[:cpu]}% | MEM #{process[:memory]}% | " \
        "STAT #{process[:stat]}"
-end 
+    end
+
+else 
+  puts "Top Processes: 取得失敗"
+end
 
 # --- Disk monitoring ---
 
@@ -256,6 +271,10 @@ system_status = {
 
 if load_average.nil?
   system_status[:load_average] = "WARNING"
+end
+
+if top_processes.nil?
+  system_status[:top_processes] = "WARNING"
 end
 
 puts system_status
