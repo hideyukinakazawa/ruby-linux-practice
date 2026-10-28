@@ -32,8 +32,13 @@ end
 
 # CPU使用率が高いプロセス上位5件を取得する
 def get_top_processes
-  process_info = `ps -eo pid,stat,comm,%cpu,%mem --sort=-%cpu`
-  command_status = $?
+  begin
+    process_info = `ps -eo pid,stat,comm,%cpu,%mem --sort=-%cpu`
+    command_status = $?
+  rescue SystemCallError => e
+    warn "Top Processesの起動失敗: #{e.message}"
+    return nil
+  end
   
   unless command_status.success?
     warn "Top Peocessesの取得失敗: psの終了コード　#{command_status.exitstatus}"
@@ -111,6 +116,10 @@ def write_report(cpu_temperature,
                  top_processes)
 
     File.open("system_report.txt", "w") do |file|
+    generated_at = Time.now.strftime('%Y-%m-%d %H:%M:%S %z')
+    puts "Report generated at: #{generated_at}"
+    file.puts "Report generated at: #{generated_at}"
+    file.puts
     file.puts "--- System Summary ---"
     
     file.puts "CPU temperature: #{cpu_temperature} C"

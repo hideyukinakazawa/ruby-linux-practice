@@ -1,23 +1,25 @@
+Report generated at: 2026-10-28 09:21:52 +0900
+
 --- System Summary ---
-CPU temperature: 41.8 C
+CPU temperature: 40.9 C
 Disk usage: 43%
-Memory usage: 79.6%
-Swap usage: 4.8%
+Memory usage: 62.0%
+Swap usage: 0.0%
 Load Average:
-1 min : 0.27
-5 min : 0.27
-15 min: 0.22
+1 min : 0.56
+5 min : 0.24
+15 min: 0.13
 
 --- Top Processes ---
-PID 3673 | ruby | CPU 80.7% | MEM 0.5% | STAT Sl+
-PID 1937 | MainThread | CPU 17.9% | MEM 49.4% | STAT Sl
-PID 1891 | MainThread | CPU 1.0% | MEM 5.5% | STAT Sl
-PID 1774 | code-2d0b7506a3 | CPU 0.5% | MEM 1.0% | STAT Sl
-PID 2018 | MainThread | CPU 0.4% | MEM 6.9% | STAT Sl
+PID 4396 | ruby | CPU 90.9% | MEM 0.5% | STAT Sl+
+PID 2031 | MainThread | CPU 3.2% | MEM 30.4% | STAT Rl
+PID 1973 | MainThread | CPU 0.8% | MEM 7.3% | STAT Sl
+PID 2044 | MainThread | CPU 0.4% | MEM 3.9% | STAT Sl
+PID 1922 | code-e646868227 | CPU 0.4% | MEM 1.0% | STAT Sl
 CPU status: NORMAL
 Disk status: NORMAL
-Memory status: WARM
+Memory status: NORMAL
 Swap status: NORMAL
 SSH status: NORMAL
-Overall status: WARM
-System message: NOTICE: System Status is WARM. Please monitor the system.
+Overall status: NORMAL
+System message: OK: System Status is NORMAL.
