@@ -123,7 +123,12 @@ def write_report(cpu_temperature,
     file.puts "--- System Summary ---"
     
     file.puts "CPU temperature: #{cpu_temperature} C"
-    file.puts "Disk usage: #{disk_usage}%"
+    if disk_usage.nil?
+      file.puts "Disk usage: 取得失敗"
+    else
+      file.puts "Disk usage: #{disk_usage}%"
+    end
+
     file.puts "Memory usage: #{memory_usage}%"
     file.puts "Swap usage: #{swap_usage}%"
 
@@ -178,8 +183,24 @@ end
 
 # dfの出力から「xx％」の数値部分だけを抽出してIntegerへ格納
 def get_disk_usage
-    disk_info = `df -h /`
-    disk_info.match(/(\d+)%/)[1].to_i
+  disk_info = `df -h /`
+  command_status = $?
+
+  unless command_status.success?
+    warn "Disk usageの取得失敗: dfの終了コード #{command_status.exitstatus}"
+    return nil
+  end
+
+  usage_match = disk_info.match(/(\d+)%/)
+  unless usage_match
+    warn "Disk usageの取得失敗: dfの出力に使用率が見つかりません"
+    return nil
+  end
+
+  usage_match[1].to_i
+rescue SystemCallError => e
+  warn "Disk usageの取得失敗: #{e.message}"
+  nil
 end
 
 # 使用率と2つの閾値から NORMAL / WARM / WARNING を判定
@@ -238,9 +259,13 @@ end
 
 disk_usage = get_disk_usage
 
-puts "Disk usage: #{disk_usage}%"
-
-disk_status = status_from_value(disk_usage, 70, 90)
+if disk_usage.nil?
+  puts "Disk usage: 取得失敗"
+  disk_status = "WARNING"
+else
+  puts "Disk usage: #{disk_usage}%"
+  disk_status = status_from_value(disk_usage, 70, 90)
+end
 
 puts "Disk status: #{disk_status}"
 
