@@ -1,6 +1,7 @@
 # Raspberry Pi のシステム状態を確認する監視スクリプト
 # CPU温度・ディスク・メモリ・Swapを取得し、状態判定後にレポートへ保存
 
+require "csv"
 puts "=== Raspberry Pi System Check ==="
 
 # --- Basic system information ---
@@ -268,6 +269,19 @@ else
 end
 
 puts "Disk status: #{disk_status}"
+history_path = File.join(__dir__, "system_history.csv")
+recorded_at = Time.now.strftime("%Y-%m-%d %H:%M:%S %z")
+
+begin
+  File.open(history_path, "a") do |file|
+    file.flock(File::LOCK_EX)
+    csv = CSV.new(file)
+    csv << %w[recorded_at disk_usage_percent disk_status] if file.size.zero?
+    csv << [recorded_at, disk_usage, disk_status]
+  end
+rescue SystemCallError, IOError => e
+  warn "監視履歴の保存に失敗しました: #{e.message}"
+end
 
 # --- Memory and Swap monitoring ---
 
