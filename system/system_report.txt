@@ -1,21 +1,21 @@
-Report generated at: 2026-11-17 21:46:31 +0900
+Report generated at: 2026-11-18 18:40:31 +0900
 
 --- System Summary ---
-CPU temperature: 38.4 C
+CPU temperature: 35.0 C
 Disk usage: 45%
-Memory usage: 68.2%
+Memory usage: 59.4%
 Swap usage: 0.0%
 Load Average:
-1 min : 0.09
-5 min : 0.13
-15 min: 0.09
+1 min : 0.41
+5 min : 0.29
+15 min: 0.17
 
 --- Top Processes ---
-PID 2762 | ruby | CPU 96.4% | MEM 0.6% | STAT Sl+
-PID 1975 | MainThread | CPU 18.2% | MEM 38.6% | STAT Sl
-PID 1910 | MainThread | CPU 2.3% | MEM 6.2% | STAT Sl
-PID 2017 | MainThread | CPU 1.2% | MEM 8.1% | STAT Sl
-PID 1949 | MainThread | CPU 0.6% | MEM 4.8% | STAT Sl
+PID 2484 | ruby | CPU 96.4% | MEM 0.6% | STAT Sl+
+PID 1882 | MainThread | CPU 8.4% | MEM 30.9% | STAT Sl
+PID 1845 | MainThread | CPU 1.9% | MEM 5.9% | STAT Sl
+PID 1957 | MainThread | CPU 1.1% | MEM 8.2% | STAT Sl
+PID 1881 | MainThread | CPU 0.6% | MEM 4.7% | STAT Sl
 CPU status: NORMAL
 Disk status: NORMAL
 Memory status: NORMAL
