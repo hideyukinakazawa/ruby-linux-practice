@@ -382,6 +382,25 @@ system_status.each do |name, status|
 
   puts "Overall_status: #{overall_status}"
 
+  begin
+    history_path = File.join(__dir__, "system_history.csv")
 
+    File.open(history_path, "r") do |file|
+      file.flock(File::LOCK_SH)
+      rows = CSV.read(file, headers: true)
+
+      puts
+      puts "--- Recent Disk History (Up to 5 records) ---"
+
+      rows.each.to_a.last(5).each do |row|
+        usage = row["disk_usage_percent"]
+        usage_text = usage.nil? || usage.empty? ? "取得失敗" : "#{usage}%"
+
+        puts "#{row['recorded_at']} | Disk usage: #{usage_text} | #{row['disk_status']}"
+      end
+    end
+  rescue SystemCallError, IOError, CSV::MalformedCSVError => e
+    warn "監視履歴の読み込みに失敗しました: #{e.message}"
+  end
 
 
